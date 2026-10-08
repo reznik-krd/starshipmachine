@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>StarMachine</title><link rel="stylesheet" href="/css/app.css"></head>
+<body>
+<div class="stars"></div>
+<div class="app-shell">
+ <aside class="sidebar">
+  <div class="brand"><div class="brand-mark">✦</div><div><strong>STAR MACHINE</strong><small>Spacecraft Control Center</small></div></div>
+  <button id="createShipBtn" class="primary full">＋ Create ship</button>
+  <div class="section-label">FLEET</div><div id="shipList" class="ship-list"></div>
+ </aside>
+ <main class="main">
+  <div id="emptyState" class="empty"><div class="planet">🪐</div><h1>Create your first spaceship</h1><p>The control center is ready.</p></div>
+  <div id="dashboard" class="dashboard hidden">
+   <header class="topbar"><div><div class="eyebrow">ACTIVE SPACECRAFT</div><h1 id="shipName"></h1></div><div class="top-actions"><span id="stateBadge" class="badge"></span><button id="deleteBtn" class="danger ghost">Delete</button></div></header>
+   <section class="hero panel">
+    <div class="ship-visual"><div id="alertGlow" class="alert-glow"></div><div class="ship-icon">🚀</div><div id="stateText" class="state-text"></div></div>
+    <div class="metrics">
+      <div class="metric"><div class="metric-head"><span>HULL INTEGRITY</span><strong id="hullValue"></strong></div><div class="progress"><div id="hullBar"></div></div></div>
+      <div class="metric"><div class="metric-head"><span>CREW</span><strong id="crewValue"></strong></div><div id="crewIcons" class="crew-icons"></div></div>
+      <div id="reasonCard" class="context-card hidden"><span>LAST DAMAGE</span><strong id="damageReason"></strong></div>
+    </div>
+   </section>
+   <div class="grid">
+    <section class="panel"><div class="panel-title">AVAILABLE COMMANDS</div><div id="commands" class="button-grid"></div></section>
+    <section class="panel incident-panel"><div class="panel-title">SIMULATE INCIDENT</div><div id="incidents" class="button-grid"></div></section>
+   </div>
+   <section class="panel log-panel"><div class="panel-title">EVENT LOG</div><div id="eventLog" class="event-log"></div></section>
+  </div>
+ </main>
+</div>
+<div id="modal" class="modal hidden"><div class="modal-card"><button id="closeModal" class="close">×</button><h2>Create spaceship</h2><input id="shipNameInput" maxlength="40" placeholder="Odyssey"><button id="confirmCreate" class="primary full">Create</button></div></div>
+<div id="meteorModal" class="modal hidden"><div class="modal-card"><button class="close" data-close="meteorModal">×</button><h2>☄ Meteor shower</h2><p>Choose intensity</p><div class="button-grid"><button data-intensity="LIGHT">Light · -10</button><button data-intensity="MEDIUM">Medium · -30</button><button data-intensity="EXTREME" class="danger">Extreme · -60</button></div></div></div>
+<div id="evacModal" class="modal hidden"><div class="modal-card"><button class="close" data-close="evacModal">×</button><h2>🛟 Evacuation</h2><textarea id="evacMessage" rows="4">Все вон, корабль разрушен!</textarea><button id="confirmEvac" class="danger full">Evacuate</button></div></div>
+<div id="toast" class="toast hidden"></div>
+<script src="/js/app.js"></script>
+</body></html>
