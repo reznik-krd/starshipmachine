@@ -13,7 +13,7 @@ import static com.reznik.krd.starshipmachine.util.Constants.LAUNCH_DELAY_MS;
 
 @Configuration
 @RequiredArgsConstructor
-@EnableStateMachineFactory(contextEvents = false)
+@EnableStateMachineFactory(contextEvents = true)
 public class ShipStateMachineConfig
         extends EnumStateMachineConfigurerAdapter<ShipState, ShipEvent> {
 

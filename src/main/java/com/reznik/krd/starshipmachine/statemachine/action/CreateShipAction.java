@@ -33,5 +33,7 @@ public class CreateShipAction implements Action<ShipState, ShipEvent> {
         context.getExtendedState()
                 .getVariables()
                 .put(SHIP_ID, spaceship.getId());
+
+        log.info("Корабль создан в action CreateShipAction");
     }
 }
