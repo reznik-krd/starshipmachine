@@ -1,6 +1,8 @@
 package com.reznik.krd.starshipmachine.statemachine.action;
 
 import com.reznik.krd.starshipmachine.entity.Spaceship;
+import com.reznik.krd.starshipmachine.entity.SpaceshipStateMachine;
+import com.reznik.krd.starshipmachine.repository.SpaceshipStateMachineRepository;
 import com.reznik.krd.starshipmachine.service.SpaceshipService;
 import com.reznik.krd.starshipmachine.statemachine.config.ShipEvent;
 import com.reznik.krd.starshipmachine.statemachine.config.ShipState;
@@ -21,6 +23,7 @@ import static com.reznik.krd.starshipmachine.util.Constants.SHIP_NAME;
 public class CreateShipAction implements Action<ShipState, ShipEvent> {
 
     private final SpaceshipService spaceshipService;
+    private final SpaceshipStateMachineRepository spaceshipStateMachineRepository;
 
     @Override
     public void execute(StateContext<ShipState, ShipEvent> context) {
@@ -28,7 +31,12 @@ public class CreateShipAction implements Action<ShipState, ShipEvent> {
 
         UUID machineID = UUID.fromString(context.getStateMachine().getId());
 
-        Spaceship spaceship = spaceshipService.create(name, machineID);
+        Spaceship spaceship = spaceshipService.create(name);
+
+        spaceshipStateMachineRepository.save(SpaceshipStateMachine.builder()
+                .stateMachineId(machineID)
+                .spaceship(spaceship)
+                .build());
 
         context.getExtendedState()
                 .getVariables()

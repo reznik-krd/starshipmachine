@@ -47,6 +47,7 @@ public class SpaceshipProcessService {
     public void delete(UUID shipId) {
         logRepository.deleteBySpaceshipId(shipId);
         machineService.stopByShipId(shipId);
+        machineService.deleteByShipId(shipId);
         spaceshipService.deleteById(shipId);
     }
 

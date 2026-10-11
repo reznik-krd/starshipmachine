@@ -15,12 +15,11 @@ public class SpaceshipService {
     private final SpaceshipRepository spaceshipRepository;
 
     @Transactional
-    public Spaceship create(String name, UUID stateMachineId) {
+    public Spaceship create(String name) {
         if (name == null || name.isBlank()) {
             throw new IllegalArgumentException("Ship name is required");
         }
         Spaceship spaceship = new Spaceship(name);
-        spaceship.setStateMachineId(stateMachineId);
         return spaceshipRepository.save(spaceship);
     }
 

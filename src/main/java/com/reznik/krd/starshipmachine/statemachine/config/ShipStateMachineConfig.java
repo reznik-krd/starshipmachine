@@ -8,6 +8,7 @@ import org.springframework.statemachine.config.EnumStateMachineConfigurerAdapter
 import org.springframework.statemachine.config.builders.StateMachineConfigurationConfigurer;
 import org.springframework.statemachine.config.builders.StateMachineStateConfigurer;
 import org.springframework.statemachine.config.builders.StateMachineTransitionConfigurer;
+import org.springframework.statemachine.persist.StateMachineRuntimePersister;
 
 import static com.reznik.krd.starshipmachine.util.Constants.LAUNCH_DELAY_MS;
 
@@ -17,13 +18,18 @@ import static com.reznik.krd.starshipmachine.util.Constants.LAUNCH_DELAY_MS;
 public class ShipStateMachineConfig
         extends EnumStateMachineConfigurerAdapter<ShipState, ShipEvent> {
 
+    private final StateMachineRuntimePersister<ShipState, ShipEvent, String> persister;
+
     private final CreateShipAction createShipAction;
 
     @Override
     public void configure(StateMachineConfigurationConfigurer<ShipState, ShipEvent> config) throws Exception {
         config
                 .withConfiguration()
-                .autoStartup(false);
+                .autoStartup(false)
+                .and()
+                .withPersistence()
+                .runtimePersister(persister);
     }
 
     @Override

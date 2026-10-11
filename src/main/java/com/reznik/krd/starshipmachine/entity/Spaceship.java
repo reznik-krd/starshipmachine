@@ -27,10 +27,6 @@ public class Spaceship {
     @Column(nullable = false)
     private int crew;
 
-    // todo временно, для демонстрации работы машины без БД
-    @Column(name = "state_machine_id")
-    private UUID stateMachineId;
-
     public Spaceship(String name) {
         this.name = name;
         this.hull = 100;
