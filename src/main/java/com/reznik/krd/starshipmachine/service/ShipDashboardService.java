@@ -102,8 +102,9 @@ public class ShipDashboardService {
         ShipState state = machine.getState().getId();
 
         return switch (state) {
-            case CREATED -> Set.of(ShipEvent.LAUNCH);
-            case FLYING -> Set.of();
+            case CREATED, LANDED -> Set.of(ShipEvent.LAUNCH);
+            case FLYING -> Set.of(ShipEvent.LAND);
+            case LANDING -> Set.of(ShipEvent.LANDING_COMPLETE);
             default -> Set.of();
         };
     }

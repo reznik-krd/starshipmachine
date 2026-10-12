@@ -1,6 +1,7 @@
 package com.reznik.krd.starshipmachine.statemachine.config;
 
 import com.reznik.krd.starshipmachine.statemachine.action.CreateShipAction;
+import com.reznik.krd.starshipmachine.statemachine.listener.ShipStateMachineListener;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.statemachine.config.EnableStateMachineFactory;
@@ -19,6 +20,7 @@ public class ShipStateMachineConfig
         extends EnumStateMachineConfigurerAdapter<ShipState, ShipEvent> {
 
     private final StateMachineRuntimePersister<ShipState, ShipEvent, String> persister;
+    private final ShipStateMachineListener listener;
 
     private final CreateShipAction createShipAction;
 
@@ -27,6 +29,7 @@ public class ShipStateMachineConfig
         config
                 .withConfiguration()
                 .autoStartup(false)
+                .listener(listener)
                 .and()
                 .withPersistence()
                 .runtimePersister(persister);
@@ -38,7 +41,9 @@ public class ShipStateMachineConfig
                 .initial(ShipState.INITIAL)
                 .state(ShipState.CREATED)
                 .state(ShipState.LAUNCHING)
-                .state(ShipState.FLYING);
+                .state(ShipState.FLYING)
+                .state(ShipState.LANDING)
+                .state(ShipState.LANDED);
     }
 
     @Override
@@ -63,6 +68,24 @@ public class ShipStateMachineConfig
                 .action((ShipState) -> {
                     System.out.println("таймаут"); // для дебага
                 })
-                .timerOnce(LAUNCH_DELAY_MS);
+                .timerOnce(LAUNCH_DELAY_MS)
+
+                .and()
+                .withExternal()
+                .source(ShipState.FLYING)
+                .target(ShipState.LANDING)
+                .event(ShipEvent.LAND)
+
+                .and()
+                .withExternal()
+                .source(ShipState.LANDING)
+                .target(ShipState.LANDED)
+                .event(ShipEvent.LANDING_COMPLETE)
+
+                .and()
+                .withExternal()
+                .source(ShipState.LANDED)
+                .target(ShipState.LAUNCHING)
+                .event(ShipEvent.LAUNCH);
     }
 }
