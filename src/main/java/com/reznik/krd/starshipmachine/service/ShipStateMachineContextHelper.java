@@ -15,6 +15,14 @@ public class ShipStateMachineContextHelper {
 
     private final SpaceshipStateMachineRepository spaceshipStateMachineRepository;
 
+    @Transactional
+    public Spaceship getShipByStateMachineId(String machineId) {
+        return spaceshipStateMachineRepository.findById(UUID.fromString(machineId))
+                .map(SpaceshipStateMachine::getSpaceship)
+                .orElseThrow();
+    }
+
+
     @Transactional(readOnly = true)
     public UUID getShipIdByStateMachineId(UUID machineId) {
         return spaceshipStateMachineRepository.findById(machineId)

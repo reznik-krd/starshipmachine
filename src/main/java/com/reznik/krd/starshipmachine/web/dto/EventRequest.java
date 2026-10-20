@@ -1,4 +1,6 @@
 package com.reznik.krd.starshipmachine.web.dto;
 
-public record EventRequest(String evacuationMessage) {
+import com.reznik.krd.starshipmachine.entity.MeteorIntensity;
+
+public record EventRequest(MeteorIntensity meteorIntensity, String evacuationMessage) {
 }

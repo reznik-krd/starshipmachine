@@ -13,8 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
-import static com.reznik.krd.starshipmachine.util.Constants.SHIP_NAME;
-import static com.reznik.krd.starshipmachine.util.Constants.SHIP_ID;
+import static com.reznik.krd.starshipmachine.util.Constants.*;
 
 @Service
 @RequiredArgsConstructor
@@ -40,6 +39,13 @@ public class SpaceshipProcessService {
 
     public boolean sendEvent(UUID shipId, ShipEvent event, EventRequest request) {
         StateMachine<ShipState, ShipEvent> machine = machineService.acquireByShipId(shipId);
+
+        if (request.meteorIntensity() != null) {
+            machine.getExtendedState()
+                    .getVariables()
+                    .put(METEOR_INTENSITY, request.meteorIntensity());
+        }
+
         return machineService.sendEvent(machine, event);
     }
 
