@@ -4,6 +4,7 @@ import com.reznik.krd.starshipmachine.statemachine.action.*;
 import com.reznik.krd.starshipmachine.statemachine.guards.CriticalGuard;
 import com.reznik.krd.starshipmachine.statemachine.guards.DamagedGuard;
 import com.reznik.krd.starshipmachine.statemachine.guards.DestroyedGuard;
+import com.reznik.krd.starshipmachine.statemachine.guards.MartianCrewGuard;
 import com.reznik.krd.starshipmachine.statemachine.listener.ShipStateMachineListener;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
@@ -31,11 +32,13 @@ public class ShipStateMachineConfig
     private final ApplyDamageAction applyDamageAction;
     private final EngineDamageAction engineDamageAction;
     private final AfterDamagingToDestroyedAction afterDamagingToDestroyedAction;
+    private final MartianBattleAction martianBattleAction;
 
     // guards
     private final DestroyedGuard destroyedGuard;
     private final CriticalGuard criticalGuard;
     private final DamagedGuard damagedGuard;
+    private final MartianCrewGuard martianCrewGuard;
 
     @Override
     public void configure(StateMachineConfigurationConfigurer<ShipState, ShipEvent> config) throws Exception {
@@ -60,7 +63,10 @@ public class ShipStateMachineConfig
                 .state(ShipState.DAMAGED)
                 .state(ShipState.CRITICAL)
                 .state(ShipState.DESTROYED)
-                .choice(ShipState.DAMAGE_CHOICE);
+                .state(ShipState.CAPTURED)
+                .state(ShipState.FIGHTING_MARTIANS)
+                .choice(ShipState.DAMAGE_CHOICE)
+                .choice(ShipState.MARTIAN_RESULT_CHOICE);
     }
 
     @Override
@@ -106,6 +112,7 @@ public class ShipStateMachineConfig
                 .event(ShipEvent.LAUNCH);
 
         damaging(transitions);
+        underMartiansAttack(transitions);
     }
 
     private void damaging(StateMachineTransitionConfigurer<ShipState, ShipEvent>
@@ -164,4 +171,35 @@ public class ShipStateMachineConfig
                 .last(ShipState.FLYING);
 
     }
+
+    public void underMartiansAttack(StateMachineTransitionConfigurer<ShipState, ShipEvent>
+                                            transitions) throws Exception {
+        transitions
+                .withExternal()
+                .source(ShipState.FLYING)
+                .target(ShipState.CAPTURED)
+                .event(ShipEvent.MARTIAN_ATTACK)
+
+                .and()
+                .withExternal()
+                .source(ShipState.CAPTURED)
+                .target(ShipState.FIGHTING_MARTIANS)
+                .event(ShipEvent.SEND_CREW)
+                .guard(martianCrewGuard)
+
+                .and()
+                .withExternal()
+                .source(ShipState.FIGHTING_MARTIANS)
+                .target(ShipState.MARTIAN_RESULT_CHOICE)
+                .event(ShipEvent.MARTIANS_DEFEATED)
+                .action(martianBattleAction)
+
+                .and()
+                .withChoice()
+                .source(ShipState.MARTIAN_RESULT_CHOICE)
+                .first(ShipState.DESTROYED, destroyedGuard, afterDamagingToDestroyedAction)
+                .then(ShipState.CRITICAL, criticalGuard)
+                .last(ShipState.DAMAGED);
+    }
+
 }

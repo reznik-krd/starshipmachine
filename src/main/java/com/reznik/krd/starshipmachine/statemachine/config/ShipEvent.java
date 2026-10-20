@@ -12,7 +12,11 @@ public enum ShipEvent {
     LAND("Land", "Начать посадку корабля"),
     LANDING_COMPLETE("LandingComplete", "Посадка корабля завершена"),
     METEOR_SHOWER("Meteor shower", "Метеоритный дождь повреждает корпус корабля"),
-    ENGINE_FAILURE("Engine failure", "Произошла поломка двигателя");
+    ENGINE_FAILURE("Engine failure", "Произошла поломка двигателя"),
+
+    MARTIAN_ATTACK("Martian attack", "Марсиане атакуют и захватывают корабль"),
+    SEND_CREW("Send crew to fight", "Отправить экипаж на борьбу с марсианами"),
+    MARTIANS_DEFEATED("Finish battle", "Завершить бой с марсианами");
 
     private final String title;
     private final String description;

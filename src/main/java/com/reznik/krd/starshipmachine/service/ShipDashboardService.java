@@ -96,7 +96,8 @@ public class ShipDashboardService {
 
     private boolean isIncident(ShipEvent e) {
         return e == ShipEvent.METEOR_SHOWER
-                || e == ShipEvent.ENGINE_FAILURE;
+                || e == ShipEvent.ENGINE_FAILURE
+                || e == ShipEvent.MARTIAN_ATTACK;
     }
 
     public Set<ShipEvent> getAvailableEventsForUI(StateMachine<ShipState, ShipEvent> machine) {
@@ -107,7 +108,8 @@ public class ShipDashboardService {
             case FLYING -> Set.of(
                     ShipEvent.LAND,
                     ShipEvent.METEOR_SHOWER,
-                    ShipEvent.ENGINE_FAILURE
+                    ShipEvent.ENGINE_FAILURE,
+                    ShipEvent.MARTIAN_ATTACK
             );
 
             case DAMAGED -> Set.of(
@@ -118,7 +120,8 @@ public class ShipDashboardService {
                     ShipEvent.METEOR_SHOWER,
                     ShipEvent.ENGINE_FAILURE
             );
-
+            case CAPTURED -> Set.of(ShipEvent.SEND_CREW);
+            case FIGHTING_MARTIANS -> Set.of(ShipEvent.MARTIANS_DEFEATED);
             case LANDING -> Set.of(ShipEvent.LANDING_COMPLETE);
             case DESTROYED -> Set.of();
             default -> Set.of();
