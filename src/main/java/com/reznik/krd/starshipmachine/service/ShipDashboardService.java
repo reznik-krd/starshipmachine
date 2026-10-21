@@ -95,15 +95,40 @@ public class ShipDashboardService {
     }
 
     private boolean isIncident(ShipEvent e) {
-        return false;
+        return e == ShipEvent.METEOR_SHOWER
+                || e == ShipEvent.ENGINE_FAILURE
+                || e == ShipEvent.MARTIAN_ATTACK;
     }
 
     public Set<ShipEvent> getAvailableEventsForUI(StateMachine<ShipState, ShipEvent> machine) {
         ShipState state = machine.getState().getId();
 
         return switch (state) {
-            case CREATED -> Set.of(ShipEvent.LAUNCH);
-            case FLYING -> Set.of();
+            case CREATED, LANDED -> Set.of(ShipEvent.LAUNCH);
+            case FLYING -> Set.of(
+                    ShipEvent.LAND,
+                    ShipEvent.METEOR_SHOWER,
+                    ShipEvent.ENGINE_FAILURE,
+                    ShipEvent.MARTIAN_ATTACK
+            );
+
+            case DAMAGED -> Set.of(
+                    ShipEvent.METEOR_SHOWER,
+                    ShipEvent.ENGINE_FAILURE,
+                    ShipEvent.START_REPAIR
+            );
+            case CRITICAL -> Set.of(
+                    ShipEvent.METEOR_SHOWER,
+                    ShipEvent.ENGINE_FAILURE,
+                    ShipEvent.START_REPAIR,
+                    ShipEvent.EVACUATE
+            );
+            case REPAIRING -> Set.of(ShipEvent.REPAIR_COMPLETE);
+            case EVACUATING -> Set.of(ShipEvent.EVACUATION_COMPLETE);
+            case CAPTURED -> Set.of(ShipEvent.SEND_CREW);
+            case FIGHTING_MARTIANS -> Set.of(ShipEvent.MARTIANS_DEFEATED);
+            case LANDING -> Set.of(ShipEvent.LANDING_COMPLETE);
+            case DESTROYED -> Set.of();
             default -> Set.of();
         };
     }

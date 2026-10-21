@@ -19,7 +19,7 @@ spring:
     data:
       jpa:
         repositories:
-          enabled: false
+          enabled: true
 server:
   port: 8080
 logging:

@@ -1,6 +1,7 @@
 package com.reznik.krd.starshipmachine.web;
 
 import com.reznik.krd.starshipmachine.service.ShipDashboardService;
+import com.reznik.krd.starshipmachine.service.SpaceshipProcessService;
 import com.reznik.krd.starshipmachine.statemachine.config.ShipEvent;
 import com.reznik.krd.starshipmachine.web.dto.*;
 import lombok.RequiredArgsConstructor;
