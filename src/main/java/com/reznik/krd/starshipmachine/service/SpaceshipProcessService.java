@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.statemachine.StateMachine;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import java.util.UUID;
 
@@ -44,6 +45,11 @@ public class SpaceshipProcessService {
             machine.getExtendedState()
                     .getVariables()
                     .put(METEOR_INTENSITY, request.meteorIntensity());
+        }
+        if (StringUtils.hasText(request.evacuationMessage())) {
+            machine.getExtendedState()
+                    .getVariables()
+                    .put(EVACUATION_MESSAGE, request.evacuationMessage());
         }
 
         return machineService.sendEvent(machine, event);

@@ -1,10 +1,7 @@
 package com.reznik.krd.starshipmachine.statemachine.config;
 
 import com.reznik.krd.starshipmachine.statemachine.action.*;
-import com.reznik.krd.starshipmachine.statemachine.guards.CriticalGuard;
-import com.reznik.krd.starshipmachine.statemachine.guards.DamagedGuard;
-import com.reznik.krd.starshipmachine.statemachine.guards.DestroyedGuard;
-import com.reznik.krd.starshipmachine.statemachine.guards.MartianCrewGuard;
+import com.reznik.krd.starshipmachine.statemachine.guards.*;
 import com.reznik.krd.starshipmachine.statemachine.listener.ShipStateMachineListener;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
@@ -33,12 +30,15 @@ public class ShipStateMachineConfig
     private final EngineDamageAction engineDamageAction;
     private final AfterDamagingToDestroyedAction afterDamagingToDestroyedAction;
     private final MartianBattleAction martianBattleAction;
+    private final EvacuationAction evacuationAction;
+    private final RepairAction repairAction;
 
     // guards
     private final DestroyedGuard destroyedGuard;
     private final CriticalGuard criticalGuard;
     private final DamagedGuard damagedGuard;
     private final MartianCrewGuard martianCrewGuard;
+    private final CrewAvailableGuard crewAvailableGuard;
 
     @Override
     public void configure(StateMachineConfigurationConfigurer<ShipState, ShipEvent> config) throws Exception {
@@ -65,8 +65,11 @@ public class ShipStateMachineConfig
                 .state(ShipState.DESTROYED)
                 .state(ShipState.CAPTURED)
                 .state(ShipState.FIGHTING_MARTIANS)
+                .state(ShipState.REPAIRING)
+                .state(ShipState.EVACUATING)
                 .choice(ShipState.DAMAGE_CHOICE)
-                .choice(ShipState.MARTIAN_RESULT_CHOICE);
+                .choice(ShipState.MARTIAN_RESULT_CHOICE)
+                .choice(ShipState.REPAIR_RESULT_CHOICE);
     }
 
     @Override
@@ -113,6 +116,8 @@ public class ShipStateMachineConfig
 
         damaging(transitions);
         underMartiansAttack(transitions);
+        repairing(transitions);
+        evacuating(transitions);
     }
 
     private void damaging(StateMachineTransitionConfigurer<ShipState, ShipEvent>
@@ -200,6 +205,53 @@ public class ShipStateMachineConfig
                 .first(ShipState.DESTROYED, destroyedGuard, afterDamagingToDestroyedAction)
                 .then(ShipState.CRITICAL, criticalGuard)
                 .last(ShipState.DAMAGED);
+    }
+
+    public void repairing(StateMachineTransitionConfigurer<ShipState, ShipEvent>
+                                  transitions) throws Exception {
+        transitions
+                .withExternal()
+                .source(ShipState.DAMAGED)
+                .target(ShipState.REPAIRING)
+                .event(ShipEvent.START_REPAIR)
+                .guard(crewAvailableGuard)
+
+                .and()
+                .withExternal()
+                .source(ShipState.CRITICAL)
+                .target(ShipState.REPAIRING)
+                .event(ShipEvent.START_REPAIR)
+                .guard(crewAvailableGuard)
+
+                .and()
+                .withExternal()
+                .source(ShipState.REPAIRING)
+                .target(ShipState.REPAIR_RESULT_CHOICE)
+                .event(ShipEvent.REPAIR_COMPLETE)
+                .action(repairAction)
+
+                .and()
+                .withChoice()
+                .source(ShipState.REPAIR_RESULT_CHOICE)
+                .first(ShipState.CRITICAL, criticalGuard)
+                .then(ShipState.DAMAGED, damagedGuard)
+                .last(ShipState.FLYING);
+    }
+
+    public void evacuating(StateMachineTransitionConfigurer<ShipState, ShipEvent>
+                                   transitions) throws Exception {
+        transitions
+                .withExternal()
+                .source(ShipState.CRITICAL)
+                .target(ShipState.EVACUATING)
+                .event(ShipEvent.EVACUATE)
+                .action(evacuationAction)
+
+                .and()
+                .withExternal()
+                .source(ShipState.EVACUATING)
+                .target(ShipState.DESTROYED)
+                .event(ShipEvent.EVACUATION_COMPLETE);
     }
 
 }

@@ -1,5 +1,6 @@
 package com.reznik.krd.starshipmachine.statemachine.config;
 
+import com.reznik.krd.starshipmachine.entity.MeteorIntensity;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.statemachine.config.StateMachineFactory;
@@ -19,6 +20,7 @@ public class StateMachinePersistenceConfig {
         return new JpaPersistingStateMachineInterceptor<>(repository, kryo -> {
             kryo.register(ShipState.class);
             kryo.register(ShipEvent.class);
+            kryo.register(MeteorIntensity.class);
         });
     }
 

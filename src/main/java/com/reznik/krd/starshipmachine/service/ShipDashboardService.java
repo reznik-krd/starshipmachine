@@ -114,12 +114,17 @@ public class ShipDashboardService {
 
             case DAMAGED -> Set.of(
                     ShipEvent.METEOR_SHOWER,
-                    ShipEvent.ENGINE_FAILURE
+                    ShipEvent.ENGINE_FAILURE,
+                    ShipEvent.START_REPAIR
             );
             case CRITICAL -> Set.of(
                     ShipEvent.METEOR_SHOWER,
-                    ShipEvent.ENGINE_FAILURE
+                    ShipEvent.ENGINE_FAILURE,
+                    ShipEvent.START_REPAIR,
+                    ShipEvent.EVACUATE
             );
+            case REPAIRING -> Set.of(ShipEvent.REPAIR_COMPLETE);
+            case EVACUATING -> Set.of(ShipEvent.EVACUATION_COMPLETE);
             case CAPTURED -> Set.of(ShipEvent.SEND_CREW);
             case FIGHTING_MARTIANS -> Set.of(ShipEvent.MARTIANS_DEFEATED);
             case LANDING -> Set.of(ShipEvent.LANDING_COMPLETE);

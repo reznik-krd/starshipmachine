@@ -16,7 +16,13 @@ public enum ShipEvent {
 
     MARTIAN_ATTACK("Martian attack", "Марсиане атакуют и захватывают корабль"),
     SEND_CREW("Send crew to fight", "Отправить экипаж на борьбу с марсианами"),
-    MARTIANS_DEFEATED("Finish battle", "Завершить бой с марсианами");
+    MARTIANS_DEFEATED("Finish battle", "Завершить бой с марсианами"),
+
+    START_REPAIR("Start repair", "Начать ремонт корабля"),
+    REPAIR_COMPLETE("Repair complete", "Завершить ремонт корабля"),
+
+    EVACUATE("Evacuate", "Начать эвакуацию экипажа"),
+    EVACUATION_COMPLETE("Evacuation complete", "Эвакуация экипажа завершена");
 
     private final String title;
     private final String description;
